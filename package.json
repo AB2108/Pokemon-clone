@@ -1,0 +1,28 @@
+{
+  "name": "pokemon-clone",
+  "version": "1.0.0",
+  "description": "Ein Pokémon-Klon im Stil der **ersten Generation** (Game Boy) — nur dass alle Kreaturen **Fischarten** sind. Optimiert fürs **Handy** mit Touch-Steuerung.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AB2108/Pokemon-clone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AB2108/Pokemon-clone/issues"
+  },
+  "homepage": "https://github.com/AB2108/Pokemon-clone#readme",
+  "dependencies": {
+    "@capacitor/android": "^6.2.1",
+    "@capacitor/core": "^6.2.1"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.2.1"
+  }
+}

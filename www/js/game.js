@@ -241,8 +241,14 @@ function renderDialog() {
 
 /* ---------- Hauptschleife ---------- */
 let last = 0;
-function loop(ts) {
-  const dt = ts - last; last = ts;
+let lastTick = 0;
+let usingInterval = false;
+
+function frame(ts) {
+  const now = ts || (performance.now ? performance.now() : Date.now());
+  const dt = last ? now - last : 16;
+  last = now;
+  lastTick = now;
 
   if (game.mode === 'overworld') updateOverworld(game, dt);
 
@@ -261,9 +267,31 @@ function loop(ts) {
     drawWindow(ctx, 20, 60, 120, 22);
     drawTextCenter(ctx, game.toast.text, 80, 67, 0);
   } else if (game.toast) game.toast = null;
-
-  requestAnimationFrame(loop);
 }
+
+function loop(ts) {
+  frame(ts);
+  if (!usingInterval) requestAnimationFrame(loop);
+}
+
+// Sofort einmal zeichnen, damit der Bildschirm nie leer bleibt.
+frame();
+
+// Watchdog: Falls requestAnimationFrame gedrosselt wird (manche In-App-Browser
+// starten es erst nach einer Berührung), auf einen Timer umschalten.
+function startLoop() {
+  last = 0;
+  requestAnimationFrame(loop);
+  setTimeout(() => {
+    if (!usingInterval && performance.now() - lastTick > 300) {
+      usingInterval = true;
+      setInterval(() => frame(), 1000 / 30);
+    }
+  }, 500);
+}
+// Nach Sichtbarkeit/Resize sicherheitshalber neu anstoßen.
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !usingInterval) { last = 0; requestAnimationFrame(loop); } });
+window.addEventListener('pageshow', () => { if (!usingInterval) { last = 0; requestAnimationFrame(loop); } });
 
 /* ---------- Eingabe-Bindung ---------- */
 function bindButton(el) {
@@ -299,4 +327,4 @@ window.addEventListener('keyup', (e) => {
 });
 
 window.game = game;
-requestAnimationFrame(loop);
+startLoop();

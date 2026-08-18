@@ -1,4 +1,14 @@
+# Node
 node_modules/
+npm-debug.log*
+
+# Dev-/Scratch-Dateien
 scratch*.js
 *.log
 .DS_Store
+
+# Android SDK (falls lokal im Projekt)
+android-sdk/
+.gradle/
+
+# Capacitor / Android Build-Artefakte werden zusätzlich in android/.gitignore behandelt

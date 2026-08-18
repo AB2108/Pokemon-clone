@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Fischmon</string>
+    <string name="title_activity_main">Fischmon</string>
+    <string name="package_name">de.fischmon.app</string>
+    <string name="custom_url_scheme">de.fischmon.app</string>
+</resources>
