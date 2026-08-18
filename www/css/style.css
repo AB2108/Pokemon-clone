@@ -65,7 +65,30 @@ html, body {
   padding: 4px 6px 0;
 }
 
-#movehint {
+#dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 46px);
+  grid-template-rows: repeat(3, 46px);
+  gap: 0;
+}
+#dpad .dbtn:nth-child(1) { grid-area: 1 / 2; }
+#dpad .dbtn:nth-child(2) { grid-area: 2 / 1; }
+#dpad .dbtn:nth-child(3) { grid-area: 2 / 2; }
+#dpad .dbtn:nth-child(4) { grid-area: 2 / 3; }
+#dpad .dbtn:nth-child(5) { grid-area: 3 / 2; }
+.dbtn {
+  font-size: 18px;
+  border: 1px solid #111;
+  border-radius: 6px;
+}
+.dbtn:active { background: #111; color: var(--gb2); }
+.dmid { background: #262626; color: #6a6a6a; pointer-events: none; }
+
+/* Standard: Steuerkreuz sichtbar, Touch-Hinweis versteckt.
+   body.nopad = nur Touch (Kreuz aus). */
+#movehint { display: none; }
+body.nopad #dpad { display: none; }
+body.nopad #movehint {
   display: flex;
   flex-direction: column;
   align-items: center;

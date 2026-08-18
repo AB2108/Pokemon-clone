@@ -112,7 +112,10 @@ function inputOverworld(key) {
   else if (key === 'start') { game.mode = 'pause'; game.menuSel = 0; }
 }
 
-const PAUSE_ITEMS = ['FISCHDEX', 'TEAM', 'TON', 'SPEICHERN', 'SCHLIESSEN'];
+function isDpadOn() { try { return localStorage.getItem('fischmon_dpad') !== '0'; } catch (e) { return true; } }
+function setDpad(on) { document.body.classList.toggle('nopad', !on); try { localStorage.setItem('fischmon_dpad', on ? '1' : '0'); } catch (e) {} }
+
+const PAUSE_ITEMS = ['FISCHDEX', 'TEAM', 'TON', 'KREUZ', 'SPEICHERN', 'SCHLIESSEN'];
 function inputPause(key) {
   const n = PAUSE_ITEMS.length;
   if (key === 'up') game.menuSel = (game.menuSel + n - 1) % n;
@@ -122,8 +125,9 @@ function inputPause(key) {
     if (game.menuSel === 0) { game.mode = 'dex'; game.dexScroll = 0; }
     else if (game.menuSel === 1) { game.mode = 'partyview'; game.partySel = 0; }
     else if (game.menuSel === 2) { const m = Sound.toggleMute(); try { localStorage.setItem('fischmon_mute', m ? '1' : '0'); } catch (e) {} toast(m ? 'Ton aus' : 'Ton an'); }
-    else if (game.menuSel === 3) { saveGame(game); game._hasSave = true; toast('Spiel gespeichert!'); }
-    else if (game.menuSel === 4) { game.mode = 'overworld'; }
+    else if (game.menuSel === 3) { setDpad(!isDpadOn()); toast(isDpadOn() ? 'Steuerkreuz an' : 'Steuerkreuz aus'); }
+    else if (game.menuSel === 4) { saveGame(game); game._hasSave = true; toast('Spiel gespeichert!'); }
+    else if (game.menuSel === 5) { game.mode = 'overworld'; }
   }
 }
 
@@ -191,8 +195,12 @@ function renderStarter() {
 
 function renderPause() {
   renderOverworld(ctx, game);
-  const items = PAUSE_ITEMS.map(it => it === 'TON' ? (Sound.isMuted() ? 'TON: AUS' : 'TON: AN') : it);
-  drawMenu(ctx, items, game.menuSel, 78, 6, 76, { lh: 10 });
+  const items = PAUSE_ITEMS.map(it => {
+    if (it === 'TON') return Sound.isMuted() ? 'TON: AUS' : 'TON: AN';
+    if (it === 'KREUZ') return isDpadOn() ? 'KREUZ: AN' : 'KREUZ: AUS';
+    return it;
+  });
+  drawMenu(ctx, items, game.menuSel, 74, 4, 82, { lh: 10 });
 }
 
 function renderDex() {
@@ -438,5 +446,6 @@ window.addEventListener('keyup', (e) => {
 });
 
 try { if (localStorage.getItem('fischmon_mute') === '1') Sound.setMuted(true); } catch (e) {}
+setDpad(isDpadOn());
 window.game = game;
 startLoop();
