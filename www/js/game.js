@@ -8,6 +8,8 @@ ctx.imageSmoothingEnabled = false;
 
 const game = {
   mode: 'title',
+  map: 'world',
+  flags: {},
   player: { x: HOME.x, y: HOME.y, dir: 'down', moving: false, frame: 0, step: 0, offx: 0, offy: 0, tx: 0, ty: 0 },
   party: [],
   bag: { net: 10, goodnet: 3, supernet: 1 },
@@ -27,6 +29,8 @@ const game = {
 
 /* ---------- Neues Spiel / Laden ---------- */
 function newGameState() {
+  game.map = 'world';
+  game.flags = {};
   game.player = { x: HOME.x, y: HOME.y, dir: 'down', moving: false, frame: 0, step: 0, offx: 0, offy: 0, tx: 0, ty: 0 };
   game.party = [];
   game.bag = { net: 10, goodnet: 3, supernet: 1 };
@@ -38,6 +42,8 @@ function newGameState() {
 function loadIntoGame() {
   const d = loadGame();
   if (!d) { newGameState(); game.mode = 'starter'; return; }
+  game.map = d.map || 'world';
+  game.flags = d.flags || {};
   game.player = Object.assign({ moving: false, frame: 0, step: 0, offx: 0, offy: 0 }, d.player);
   game.party = d.party || [];
   game.bag = d.bag || { net: 10 };
@@ -51,6 +57,7 @@ function chooseStarter(spId) {
   game.party = [fish];
   game.dex.add(spId); game.caught.add(spId);
   game.starterChosen = true;
+  game.map = 'world';
   game.player.x = HOME.x; game.player.y = HOME.y; game.player.dir = 'down';
   saveGame(game);
   game.mode = 'overworld';
@@ -357,6 +364,60 @@ function bindButton(el) {
   el.addEventListener('mouseleave', up);
 }
 document.querySelectorAll('.btn').forEach(bindButton);
+
+/* ---------- Touchscreen-Steuerung auf dem Spielfeld ----------
+   Overworld: Finger auflegen und ziehen = virtueller Joystick (laufen).
+              Kurzes Tippen = A (reden / untersuchen).
+   Menüs:     Wischen = Cursor bewegen, Tippen = A (bestätigen). */
+let ptr = null;
+const DEAD = 14, SWIPE = 24;
+
+function canvasXY(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+function dominant(dx, dy) {
+  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+}
+function ptrDown(e) {
+  e.preventDefault();
+  Sound.resume();
+  try { canvas.setPointerCapture(e.pointerId); } catch (x) {}
+  const p = canvasXY(e);
+  ptr = { id: e.pointerId, sx: p.x, sy: p.y, moved: false, t0: Date.now() };
+}
+function ptrMove(e) {
+  if (!ptr || e.pointerId !== ptr.id) return;
+  e.preventDefault();
+  const p = canvasXY(e);
+  const dx = p.x - ptr.sx, dy = p.y - ptr.sy, mag = Math.hypot(dx, dy);
+  if (game.mode === 'overworld') {
+    if (mag > DEAD) { ptr.moved = true; game.held = dominant(dx, dy); }
+    else game.held = null;
+  } else if (!ptr.moved && mag > SWIPE) {
+    ptr.moved = true;
+    const d = dominant(dx, dy);
+    Sound.sfx('cursor');
+    discrete(d);
+  }
+}
+function ptrUp(e) {
+  if (!ptr || e.pointerId !== ptr.id) return;
+  e.preventDefault();
+  const tap = !ptr.moved && (Date.now() - ptr.t0) < 400;
+  if (game.mode === 'overworld') {
+    game.held = null;
+    if (tap) { Sound.sfx('select'); interactOverworld(game); }
+  } else if (tap) {
+    Sound.sfx('select');
+    discrete('a');
+  }
+  ptr = null;
+}
+canvas.addEventListener('pointerdown', ptrDown);
+canvas.addEventListener('pointermove', ptrMove);
+canvas.addEventListener('pointerup', ptrUp);
+canvas.addEventListener('pointercancel', () => { game.held = null; ptr = null; });
 
 const KEYMAP = {
   ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',

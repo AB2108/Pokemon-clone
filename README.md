@@ -29,10 +29,12 @@ Das APK wird automatisch von **GitHub Actions** gebaut (Workflow
 
 ### Steuerung
 
-| Aktion            | Touch          | Tastatur              |
-|-------------------|----------------|-----------------------|
-| Bewegen / Menü    | Steuerkreuz    | Pfeiltasten / W A S D |
-| A (Bestätigen)    | roter A-Knopf  | `Z` oder `Enter`      |
+| Aktion            | Touch                                   | Tastatur              |
+|-------------------|-----------------------------------------|-----------------------|
+| Laufen            | Finger aufs Bild legen & **ziehen**     | Pfeiltasten / W A S D |
+| Reden/Untersuchen | kurz aufs Bild **tippen** (oder A)      | `Z` / `Enter`         |
+| Menü navigieren   | **wischen** = Cursor, **tippen** = A    | Pfeiltasten           |
+| A (Bestätigen)    | roter A-Knopf                            | `Z` oder `Enter`      |
 | B (Zurück)        | roter B-Knopf  | `X`                   |
 | Menü öffnen       | MENÜ           | `Umschalt` / `Esc`    |
 
@@ -40,6 +42,11 @@ Das APK wird automatisch von **GitHub Actions** gebaut (Workflow
 
 - **Overworld** im Game-Boy-Look (4-Farben-Grünpalette) mit Stadt, Teich,
   Strand, Riff und Höhle.
+- **Begehbare Gebäude & Gebiete**: Zuhause, Prof. Kiemanns Labor und ein
+  Fisch-Center (Heilung) lassen sich betreten; ein Nordtor führt in die
+  **Nordroute**. NPCs zum Ansprechen in Stadt und Innenräumen.
+- **Touch-Steuerung**: virtueller Joystick (ziehen zum Laufen), Tippen zum
+  Reden/Bestätigen, Wischen zur Menünavigation.
 - **Zufallsbegegnungen** in den blauen Untiefen — jede Zone hat eigene Fische.
 - **Rundenbasierte Kämpfe** mit Typ-Effektivität (Fluss, Meer, Tiefsee, Elektro,
   Gift, Panzer, Räuber), Statuswert-Änderungen, Level-Aufstieg & Entwicklungen.

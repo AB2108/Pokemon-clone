@@ -16,17 +16,20 @@
     </div>
 
     <div id="controls">
-      <div id="dpad">
-        <button class="btn dbtn" data-key="up"    aria-label="Hoch">▲</button>
-        <button class="btn dbtn" data-key="left"  aria-label="Links">◀</button>
-        <button class="btn dbtn dmid" data-key="none" tabindex="-1"></button>
-        <button class="btn dbtn" data-key="right" aria-label="Rechts">▶</button>
-        <button class="btn dbtn" data-key="down"  aria-label="Runter">▼</button>
+      <div id="movehint">
+        <div class="pad-ring">
+          <span class="pad-arrow up">▲</span>
+          <span class="pad-arrow left">◀</span>
+          <span class="pad-dot">✥</span>
+          <span class="pad-arrow right">▶</span>
+          <span class="pad-arrow down">▼</span>
+        </div>
+        <span class="hint-text">Ziehen zum Laufen<br>Tippen zum Reden</span>
       </div>
       <div id="actions">
         <div class="ab-row">
-          <button class="btn round" data-key="b" aria-label="B">B</button>
-          <button class="btn round" data-key="a" aria-label="A">A</button>
+          <button class="btn round" data-key="b" aria-label="B (Zurück)">B</button>
+          <button class="btn round" data-key="a" aria-label="A (Bestätigen)">A</button>
         </div>
         <button class="btn pill" data-key="start" aria-label="Menü">MENÜ</button>
       </div>

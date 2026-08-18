@@ -318,7 +318,7 @@ const MAP = [
   "#,,HDDH,,...LDDL...,,HDDH,,,#",
   "#,,,,,,,,...,,,,...,,,,,,,,,#",
   "#,,,,P,,,...,,,,...,,,B,,,,,#",
-  "#,,,,,,,,,,,,,,,,,,,,,,,,,,,#",
+  "#,,,,,,G,,,,,,,,,,,,,,,,,,,,#",
   "#T,,,,,,,,,,====,,,,,,,,,,,T#",
   "#TT,,,,,ssss====ssss,,,,,,TT#",
   "#T,,,,sssssssWWssssssss,,,,T#",
@@ -341,23 +341,149 @@ const MAP = [
   "############################"
 ];
 
-/* NPCs: {x, y, name, lines:[...], face} */
-const NPCS = [
-  { x: 13, y: 3, name: 'Prof. Kiemann',
-    lines: ['Willkommen in der Welt der FISCHMON!', 'Ich bin Prof. Kiemann.',
-            'Wähle deinen ersten Fisch und', 'fang sie alle mit dem Netz!'] , starter: true },
-  { x: 21, y: 6, name: 'Schild',
-    lines: ['ROUTE 1', 'Vorsicht: In den Untiefen', 'lauern wilde Fische.'] },
-  { x: 4, y: 18, name: 'Schild',
-    lines: ['Zum STRAND im Südwesten.', 'Dort schwimmt Salzwasser-Getier.'] },
-  { x: 23, y: 19, name: 'Schild',
-    lines: ['RIFF im Südosten &', 'HÖHLE in der Mitte.'] },
-  { x: 8, y: 7, name: 'Angler Uwe',
-    lines: ['Ein guter Angler kennt jede', 'Kachel mit Untiefe.', 'Lauf hinein und warte ab!'] },
-  { x: 19, y: 8, name: 'Angler Uwe',
-    lines: ['Elektro-Fische treffen alle', 'Wasser-Fische hart.', 'Aber Panzer-Fische lachen nur.'] }
+/* =========================================================================
+   INNENRÄUME & WEITERE GEBIETE
+   Zusätzliche Kacheln:
+     M  Fußmatte/Ausgang (begehbar, Warp)   G  Tor/Treppe (begehbar, Warp)
+     O  Tisch/Möbel (blockiert)             E  Regal/Gerät (blockiert)
+     b  Bett/Heilliege (blockiert)          K  Tresen (blockiert)
+   ========================================================================= */
+const HOME_MAP = [
+  "##########",
+  "#E.OO..E.#",
+  "#..OO....#",
+  "#.b......#",
+  "#........#",
+  "#........#",
+  "####MM####",
+  "##########"
+];
+const LAB_MAP = [
+  "############",
+  "#EE.EE.EE.E#",
+  "#..........#",
+  "#...OOOO...#",
+  "#...OOOO...#",
+  "#..........#",
+  "#####MM#####",
+  "############"
+];
+const CENTER_MAP = [
+  "###########",
+  "#KKKKKK...#",
+  "#.........#",
+  "#.........#",
+  "#...bb....#",
+  "#.........#",
+  "#.........#",
+  "####MM#####",
+  "###########"
+];
+const ROUTE2_MAP = [
+  "##################",
+  "#TT,,,,,,,,,,,,TT#",
+  "#T,,,,,,,,,,,,,,T#",
+  "#,,,,ssss,,,,,,,,#",
+  "#,,,ssssss,,,,,,,#",
+  "#,,,ssWWss,,,,,,,#",
+  "#,,,ssssss,,,,,,,#",
+  "#,,,,ssss,,,,,,,,#",
+  "#,,,,,,,,,,,TT,,,#",
+  "#T,,,,,,,,,,TT,,T#",
+  "#TT,,,,,,,,,,,,,,#",
+  "#,,,,,,,,,,,,,,,,#",
+  "#,,,,,,,GG,,,,,,,#",
+  "##################"
 ];
 
+/* Karten-Register: jede Karte hat Gitter, NPCs und Warps.
+   Warp: {x, y, to, tx, ty, dir}  -> beim Betreten von (x,y) nach (tx,ty) auf Karte `to` */
+const MAPS = {
+  world: {
+    name: 'Seedorf',
+    grid: MAP,
+    npcs: [
+      { x: 21, y: 6, name: 'Schild',
+        lines: ['ROUTE 1', 'In den Untiefen lauern', 'wilde Fische.'] },
+      { x: 6, y: 7, name: 'Schild',
+        lines: ['NORDTOR', 'Nach Norden geht es zur', 'NORDROUTE.'] },
+      { x: 4, y: 18, name: 'Schild',
+        lines: ['Zum STRAND im Südwesten.', 'Dort schwimmt Salzwasser-', 'Getier.'] },
+      { x: 23, y: 19, name: 'Schild',
+        lines: ['RIFF im Südosten &', 'HÖHLE in der Mitte.'] },
+      { x: 16, y: 5, name: 'Nachbar',
+        lines: ['Prof. Kiemann ist in seinem', 'LABOR in der Mitte.', 'Geh doch mal rein!'] },
+      { x: 8, y: 6, name: 'Angler Uwe',
+        lines: ['Ein guter Angler kennt jede', 'Kachel mit Untiefe.', 'Lauf hinein und warte ab!'] },
+      { x: 19, y: 8, name: 'Angler Uwe',
+        lines: ['Elektro-Fische treffen alle', 'Wasser-Fische hart.', 'Aber Panzer lachen nur.'] },
+      { x: 24, y: 6, name: 'Kind',
+        lines: ['Im FISCH-CENTER (rechtes Haus)', 'werden deine Fische geheilt!'] }
+    ],
+    warps: [
+      { x: 4, y: 4, to: 'home', tx: 4, ty: 5, dir: 'up' },
+      { x: 5, y: 4, to: 'home', tx: 5, ty: 5, dir: 'up' },
+      { x: 13, y: 4, to: 'lab', tx: 5, ty: 5, dir: 'up' },
+      { x: 14, y: 4, to: 'lab', tx: 6, ty: 5, dir: 'up' },
+      { x: 22, y: 4, to: 'center', tx: 4, ty: 6, dir: 'up' },
+      { x: 23, y: 4, to: 'center', tx: 5, ty: 6, dir: 'up' },
+      { x: 7, y: 7, to: 'route2', tx: 8, ty: 11, dir: 'up' }
+    ]
+  },
+  home: {
+    name: 'Zuhause',
+    grid: HOME_MAP,
+    npcs: [
+      { x: 7, y: 3, name: 'Mama',
+        lines: ['Willkommen zu Hause, Schatz!', 'Ruh dich aus - deine Fische', 'sind wieder topfit!'], heal: true }
+    ],
+    warps: [
+      { x: 4, y: 6, to: 'world', tx: 4, ty: 5, dir: 'down' },
+      { x: 5, y: 6, to: 'world', tx: 5, ty: 5, dir: 'down' }
+    ]
+  },
+  lab: {
+    name: 'Labor',
+    grid: LAB_MAP,
+    npcs: [
+      { x: 5, y: 2, name: 'Prof. Kiemann',
+        lines: ['Willkommen in der Welt der', 'FISCHMON! Fang mit dem NETZ', 'so viele Arten wie möglich', 'für den FISCHDEX!'] },
+      { x: 9, y: 5, name: 'Assistent',
+        lines: ['Verschiedene Gewässer bergen', 'verschiedene Fische:', 'Teich, Meer, Riff und Höhle.'] }
+    ],
+    warps: [
+      { x: 5, y: 6, to: 'world', tx: 13, ty: 5, dir: 'down' },
+      { x: 6, y: 6, to: 'world', tx: 14, ty: 5, dir: 'down' }
+    ]
+  },
+  center: {
+    name: 'Fisch-Center',
+    grid: CENTER_MAP,
+    npcs: [
+      { x: 3, y: 2, name: 'Schwester',
+        lines: ['Willkommen im FISCH-CENTER!', 'Ich päpple deine Fische auf.', 'Sie sind wieder voll fit!'], heal: true, nets: true }
+    ],
+    warps: [
+      { x: 4, y: 7, to: 'world', tx: 22, ty: 5, dir: 'down' },
+      { x: 5, y: 7, to: 'world', tx: 23, ty: 5, dir: 'down' }
+    ]
+  },
+  route2: {
+    name: 'Nordroute',
+    grid: ROUTE2_MAP,
+    npcs: [
+      { x: 12, y: 5, name: 'Anglerin Rosa',
+        lines: ['Die NORDROUTE hat einen', 'eigenen Teich.', 'Vielleicht ein seltener Fang!'] },
+      { x: 6, y: 12, name: 'Schild',
+        lines: ['NORDROUTE', 'Zurück nach Seedorf:', 'durch das Tor im Süden.'] }
+    ],
+    warps: [
+      { x: 7, y: 12, to: 'world', tx: 7, ty: 8, dir: 'down' },
+      { x: 8, y: 12, to: 'world', tx: 7, ty: 8, dir: 'down' }
+    ]
+  }
+};
+
 /* Kachel-Klassifikation */
-const BLOCKED = new Set(['#', 'T', 'W', 'H', 'L', 'B']);
+const BLOCKED = new Set(['#', 'T', 'W', 'H', 'L', 'B', 'O', 'E', 'b', 'K']);
 const ENCOUNTER_TILE = { 's': 'pond', '~': 'sea', 'r': 'reef', 'c': 'deep' };

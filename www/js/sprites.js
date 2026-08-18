@@ -107,6 +107,45 @@ function drawTile(ctx, ch, x, y, frame) {
       pset(ctx, x + 4, y + 7, 6, 1, 3);
       pset(ctx, x + 7, y + 10, 2, 4, 0);
       break;
+    case 'M': // Fußmatte / Ausgang
+      pset(ctx, x, y, TILE, TILE, 2);
+      pset(ctx, x + 2, y + 5, 12, 8, 1);
+      pset(ctx, x + 3, y + 6, 10, 6, 3);
+      pset(ctx, x + 6, y + 7, 4, 1, 1);
+      break;
+    case 'G': // Tor / Treppe nach außen
+      pset(ctx, x, y, TILE, TILE, 3);
+      pset(ctx, x + 2, y + 1, 12, 14, 0);   // dunkler Durchgang
+      pset(ctx, x + 3, y + 10, 10, 2, 1);   // Stufen
+      pset(ctx, x + 4, y + 12, 8, 2, 2);
+      pset(ctx, x + 5, y + 14, 6, 2, 3);
+      break;
+    case 'O': // Tisch / Möbel
+      pset(ctx, x, y, TILE, TILE, 2);
+      pset(ctx, x + 1, y + 3, 14, 8, 1);
+      pset(ctx, x + 1, y + 3, 14, 2, 0);
+      pset(ctx, x + 2, y + 11, 2, 4, 0);
+      pset(ctx, x + 12, y + 11, 2, 4, 0);
+      break;
+    case 'E': // Regal / Gerät
+      pset(ctx, x, y, TILE, TILE, 2);
+      pset(ctx, x + 2, y + 1, 12, 14, 0);
+      pset(ctx, x + 3, y + 3, 10, 2, 2);
+      pset(ctx, x + 3, y + 7, 10, 2, 2);
+      pset(ctx, x + 3, y + 11, 10, 2, 1);
+      break;
+    case 'b': // Bett / Heilliege
+      pset(ctx, x, y, TILE, TILE, 2);
+      pset(ctx, x + 2, y + 2, 12, 12, 0);
+      pset(ctx, x + 3, y + 3, 4, 4, 3);     // Kissen
+      pset(ctx, x + 3, y + 8, 10, 5, 1);    // Decke
+      break;
+    case 'K': // Tresen
+      pset(ctx, x, y, TILE, TILE, 2);
+      pset(ctx, x, y + 2, TILE, 9, 1);
+      pset(ctx, x, y + 2, TILE, 2, 0);
+      pset(ctx, x, y + 11, TILE, 1, 0);
+      break;
     default:
       pset(ctx, x, y, TILE, TILE, grassBg);
   }

@@ -6,11 +6,13 @@ const SAVE_KEY = 'fischmon_save_v1';
 function saveGame(state) {
   try {
     const data = {
+      map: state.map || 'world',
       player: { x: state.player.x, y: state.player.y, dir: state.player.dir },
       party: state.party,
       dex: Array.from(state.dex),
       caught: Array.from(state.caught),
       bag: state.bag,
+      flags: state.flags || {},
       starterChosen: state.starterChosen
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));

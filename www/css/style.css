@@ -43,6 +43,7 @@ html, body {
 
 #game {
   background: #000;
+  touch-action: none;
   width: 100%;
   height: auto;
   max-width: 100%;
@@ -64,17 +65,40 @@ html, body {
   padding: 4px 6px 0;
 }
 
-#dpad {
-  display: grid;
-  grid-template-columns: repeat(3, 46px);
-  grid-template-rows: repeat(3, 46px);
-  gap: 0;
+#movehint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.85;
 }
-#dpad .dbtn:nth-child(1) { grid-area: 1 / 2; }
-#dpad .dbtn:nth-child(2) { grid-area: 2 / 1; }
-#dpad .dbtn:nth-child(3) { grid-area: 2 / 2; }
-#dpad .dbtn:nth-child(4) { grid-area: 2 / 3; }
-#dpad .dbtn:nth-child(5) { grid-area: 3 / 2; }
+.pad-ring {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #2f2f2f, #161616);
+  border: 2px solid #333;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+}
+.pad-arrow, .pad-dot {
+  position: absolute;
+  color: #7d7d7d;
+  font-size: 16px;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+}
+.pad-arrow.up { top: 14%; }
+.pad-arrow.down { top: 86%; }
+.pad-arrow.left { left: 16%; }
+.pad-arrow.right { left: 84%; }
+.pad-dot { color: #9bbc0f; font-size: 20px; }
+.hint-text {
+  color: #9a9a9a;
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: center;
+}
 
 .btn {
   font-family: inherit;
@@ -87,13 +111,6 @@ html, body {
   align-items: center;
   justify-content: center;
 }
-.dbtn {
-  font-size: 18px;
-  border: 1px solid #111;
-}
-.dbtn:active { background: #111; color: var(--gb2); }
-.dmid { background: #262626; pointer-events: none; }
-
 #actions {
   display: flex;
   flex-direction: column;
@@ -127,5 +144,4 @@ html, body {
 
 @media (min-width: 760px) and (min-height: 620px) {
   #controls { max-width: 640px; }
-  #dpad { grid-template-columns: repeat(3, 54px); grid-template-rows: repeat(3, 54px); }
 }
