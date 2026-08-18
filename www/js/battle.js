@@ -168,9 +168,10 @@ function makeBattle(opts) {
 
       const r = calcDamage(att, def, move);
       def.hp = Math.max(0, def.hp - r.dmg);
+      Sound.sfx(r.eff > 1 ? 'superhit' : (r.eff < 1 ? 'weakhit' : 'hit'));
       if (r.eff > 1) add('Sehr effektiv!');
       else if (r.eff > 0 && r.eff < 1) add('Nicht sehr effektiv...');
-      if (def.hp <= 0) add(`${def.name} wurde besiegt!`);
+      if (def.hp <= 0) { Sound.sfx('faint'); add(`${def.name} wurde besiegt!`); }
       return steps;
     };
   }
@@ -202,6 +203,7 @@ function makeBattle(opts) {
 
   function winSteps() {
     B.ended = true; B.outcome = 'win';
+    Sound.sfx('victory');
     const steps = [];
     const add = (t) => { for (const s of msgSteps(t)) steps.push(s); };
     const fish = active();
@@ -211,6 +213,7 @@ function makeBattle(opts) {
       const res = gainXpToFish(fish, xp);
       const out = [];
       const a = (t) => { for (const s of msgSteps(t)) out.push(s); };
+      if (res.levels.length) Sound.sfx('levelup');
       for (const lv of res.levels) a(`${fish.name} steigt auf Lv.${lv}!`);
       for (const mv of res.learned) a(`${fish.name} lernt ${MOVES[mv].name}!`);
       const evo = evolvedForm(fish);
@@ -274,6 +277,7 @@ function makeBattle(opts) {
     const net = NETS[netId];
     B.bag[netId] = (B.bag[netId] || 0) - 1;
     B.q = [];
+    Sound.sfx('throw');
     pushMsg(`Du wirfst ${net.name}!`);
     const e = B.enemy;
     const hpF = (3 * e.maxHp - 2 * e.hp) / (3 * e.maxHp);
@@ -281,6 +285,7 @@ function makeBattle(opts) {
     const p = Math.min(0.95, rate / 255 * 1.4);
     if (Math.random() < p) {
       B.ended = true; B.outcome = 'caught';
+      Sound.sfx('catch');
       pushMsg(`Klasse! ${e.name} wurde gefangen!`);
       B.q.push({ t: 'a', fn: () => {
         B.dex.add(e.sp); B.caught.add(e.sp);
@@ -309,6 +314,7 @@ function makeBattle(opts) {
     B.q = [];
     if (Math.random() < chance) {
       B.ended = true; B.outcome = 'run'; B.finalMsg = ['Entkommen!'];
+      Sound.sfx('run');
       pushMsg('Du bist entkommen!');
     } else {
       pushMsg('Flucht gescheitert!');

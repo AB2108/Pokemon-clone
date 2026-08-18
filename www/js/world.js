@@ -33,7 +33,7 @@ function startStep(game, dir) {
   p.dir = dir;
   const [dx, dy] = DIRV[dir];
   const nx = p.x + dx, ny = p.y + dy;
-  if (isBlocked(nx, ny)) { p.step = (p.step + 1) % 2; return; } // gegen Wand: nur umdrehen
+  if (isBlocked(nx, ny)) { p.step = (p.step + 1) % 2; if (window.Sound) Sound.sfx('bump'); return; } // gegen Wand: nur umdrehen
   p.moving = true;
   p.frame = 0;
   p.tx = nx; p.ty = ny;

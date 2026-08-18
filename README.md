@@ -47,6 +47,11 @@ Das APK wird automatisch von **GitHub Actions** gebaut (Workflow
 - **Fischdex** mit Gesehen-/Gefangen-Zähler und ein **Team**-Menü.
 - **Speichern** im Browser (`localStorage`) — der Spielstand bleibt erhalten.
 - Über **30 Fischarten** mit prozedural gezeichneten Pixel-Sprites.
+- **Chiptune-Musik & Soundeffekte** im Game-Boy-Stil (Web Audio, ohne Dateien):
+  eigene Titel-, Overworld- und Kampfmusik, Sieg-Jingle sowie Effekte für Menü,
+  Treffer, Fangen, Level-Up u. v. m. Ton-Schalter im **MENÜ**.
+- **Gestochen scharfes Rendering** in voller Bildschirmauflösung (kein
+  verwaschenes Hochskalieren mehr).
 
 ### Starter
 

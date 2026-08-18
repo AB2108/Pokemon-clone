@@ -60,7 +60,12 @@ function chooseStarter(spId) {
 
 /* ---------- Eingabe ---------- */
 function keyDown(key) {
+  Sound.resume();                    // Audio bei erster Berührung freischalten
   if (DIRV[key]) game.held = key;
+  // dezente Menü-Blips (nicht beim Laufen in der Overworld)
+  if (key === 'a' || key === 'start') Sound.sfx('select');
+  else if (key === 'b') Sound.sfx('back');
+  else if (DIRV[key] && game.mode !== 'overworld') Sound.sfx('cursor');
   discrete(key);
 }
 function keyUp(key) {
@@ -100,16 +105,18 @@ function inputOverworld(key) {
   else if (key === 'start') { game.mode = 'pause'; game.menuSel = 0; }
 }
 
+const PAUSE_ITEMS = ['FISCHDEX', 'TEAM', 'TON', 'SPEICHERN', 'SCHLIESSEN'];
 function inputPause(key) {
-  const items = ['FISCHDEX', 'TEAM', 'SPEICHERN', 'SCHLIESSEN'];
-  if (key === 'up') game.menuSel = (game.menuSel + items.length - 1) % items.length;
-  else if (key === 'down') game.menuSel = (game.menuSel + 1) % items.length;
+  const n = PAUSE_ITEMS.length;
+  if (key === 'up') game.menuSel = (game.menuSel + n - 1) % n;
+  else if (key === 'down') game.menuSel = (game.menuSel + 1) % n;
   else if (key === 'b' || key === 'start') { game.mode = 'overworld'; }
   else if (key === 'a') {
     if (game.menuSel === 0) { game.mode = 'dex'; game.dexScroll = 0; }
     else if (game.menuSel === 1) { game.mode = 'partyview'; game.partySel = 0; }
-    else if (game.menuSel === 2) { saveGame(game); game._hasSave = true; toast('Spiel gespeichert!'); }
-    else if (game.menuSel === 3) { game.mode = 'overworld'; }
+    else if (game.menuSel === 2) { const m = Sound.toggleMute(); try { localStorage.setItem('fischmon_mute', m ? '1' : '0'); } catch (e) {} toast(m ? 'Ton aus' : 'Ton an'); }
+    else if (game.menuSel === 3) { saveGame(game); game._hasSave = true; toast('Spiel gespeichert!'); }
+    else if (game.menuSel === 4) { game.mode = 'overworld'; }
   }
 }
 
@@ -177,8 +184,8 @@ function renderStarter() {
 
 function renderPause() {
   renderOverworld(ctx, game);
-  const items = ['FISCHDEX', 'TEAM', 'SPEICHERN', 'SCHLIESSEN'];
-  drawMenu(ctx, items, game.menuSel, 92, 6, 62);
+  const items = PAUSE_ITEMS.map(it => it === 'TON' ? (Sound.isMuted() ? 'TON: AUS' : 'TON: AN') : it);
+  drawMenu(ctx, items, game.menuSel, 78, 6, 76, { lh: 10 });
 }
 
 function renderDex() {
@@ -239,10 +246,39 @@ function renderDialog() {
   if (t) pset(ctx, 148, 134, 4, 4, 0);
 }
 
+/* ---------- Auflösung / Skalierung ----------
+   Das Spiel wird logisch in 160x144 gezeichnet, aber in der vollen
+   Bildschirmauflösung (inkl. devicePixelRatio) gerendert -> scharfer Text
+   und Grafik statt eines hochskalierten Mini-Puffers. */
+const LOGW = 160, LOGH = 144;
+const RS = { scale: 1, offX: 0, offY: 0 };
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = Math.max(1, Math.round((rect.width || LOGW) * dpr));
+  const h = Math.max(1, Math.round((rect.height || LOGH) * dpr));
+  if (canvas.width !== w) canvas.width = w;
+  if (canvas.height !== h) canvas.height = h;
+  const scale = Math.min(canvas.width / LOGW, canvas.height / LOGH);
+  RS.scale = scale;
+  RS.offX = Math.floor((canvas.width - LOGW * scale) / 2);
+  RS.offY = Math.floor((canvas.height - LOGH * scale) / 2);
+}
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+
 /* ---------- Hauptschleife ---------- */
 let last = 0;
 let lastTick = 0;
 let usingInterval = false;
+let lastMode = null;
+
+function updateSceneMusic() {
+  if (game.mode === 'title' || game.mode === 'starter') Sound.music('title');
+  else if (game.mode === 'battle') Sound.music('battle');
+  else Sound.music('overworld');
+}
 
 function frame(ts) {
   const now = ts || (performance.now ? performance.now() : Date.now());
@@ -250,7 +286,16 @@ function frame(ts) {
   last = now;
   lastTick = now;
 
+  if (game.mode !== lastMode) { updateSceneMusic(); lastMode = game.mode; }
+
   if (game.mode === 'overworld') updateOverworld(game, dt);
+
+  // Auf volle Auflösung skalieren, Ränder schwarz füllen (Letterbox)
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.setTransform(RS.scale, 0, 0, RS.scale, RS.offX, RS.offY);
+  ctx.imageSmoothingEnabled = false;
 
   switch (game.mode) {
     case 'title': renderTitle(); break;
@@ -275,13 +320,18 @@ function loop(ts) {
 }
 
 // Sofort einmal zeichnen, damit der Bildschirm nie leer bleibt.
+resize();
 frame();
 
 // Watchdog: Falls requestAnimationFrame gedrosselt wird (manche In-App-Browser
 // starten es erst nach einer Berührung), auf einen Timer umschalten.
 function startLoop() {
   last = 0;
+  resize();
   requestAnimationFrame(loop);
+  // Layout kann kurz nach dem Laden noch nachjustieren.
+  setTimeout(resize, 60);
+  setTimeout(resize, 300);
   setTimeout(() => {
     if (!usingInterval && performance.now() - lastTick > 300) {
       usingInterval = true;
@@ -326,5 +376,6 @@ window.addEventListener('keyup', (e) => {
   keyUp(k);
 });
 
+try { if (localStorage.getItem('fischmon_mute') === '1') Sound.setMuted(true); } catch (e) {}
 window.game = game;
 startLoop();
