@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f380f">
+<title>Fischmon</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="device">
+    <div id="screen-wrap">
+      <canvas id="game" width="160" height="144"></canvas>
+    </div>
+
+    <div id="controls">
+      <div id="dpad">
+        <button class="btn dbtn" data-key="up"    aria-label="Hoch">▲</button>
+        <button class="btn dbtn" data-key="left"  aria-label="Links">◀</button>
+        <button class="btn dbtn dmid" data-key="none" tabindex="-1"></button>
+        <button class="btn dbtn" data-key="right" aria-label="Rechts">▶</button>
+        <button class="btn dbtn" data-key="down"  aria-label="Runter">▼</button>
+      </div>
+      <div id="actions">
+        <div class="ab-row">
+          <button class="btn round" data-key="b" aria-label="B">B</button>
+          <button class="btn round" data-key="a" aria-label="A">A</button>
+        </div>
+        <button class="btn pill" data-key="start" aria-label="Menü">MENÜ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/battle.js"></script>
+  <script src="js/world.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

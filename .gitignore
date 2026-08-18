@@ -1,0 +1,4 @@
+node_modules/
+scratch*.js
+*.log
+.DS_Store
